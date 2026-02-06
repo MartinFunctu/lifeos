@@ -11,7 +11,8 @@ import {
     CreditCard,
     DollarSign,
     Landmark,
-    Coins
+    Coins,
+    Globe
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -32,6 +33,7 @@ export const iconMap: Record<string, any> = {
     'service': Box,
     'rocket': Rocket,
     'dashboard': LayoutDashboard,
+    'lifeos': Globe,
 };
 
 interface IconDisplayProps {

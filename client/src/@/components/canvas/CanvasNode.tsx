@@ -1,26 +1,26 @@
 import { memo } from 'react';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import { cn } from '@/lib/utils';
 import { IconDisplay } from './IconMapper';
 
 export interface SubBlock {
     id: string;
     label: string;
-    icon?: string;
     status?: 'online' | 'offline' | 'pending';
     subBlocks?: SubBlock[];
 }
 
-export interface ServiceNodeData {
+export interface ServiceNodeData extends Record<string, unknown> {
     label: string;
     status?: 'online' | 'offline' | 'pending';
-    icon?: string;
     url?: string;
     volume?: string;
     subBlocks?: SubBlock[];
 }
 
-const CanvasNode = memo(({ data, selected }: NodeProps<ServiceNodeData>) => {
+type ServiceNode = Node<ServiceNodeData, 'service'>;
+
+const CanvasNode = memo(({ data, selected }: NodeProps<ServiceNode>) => {
     const statusColors = {
         online: 'bg-green-500',
         offline: 'bg-red-500',
@@ -41,7 +41,7 @@ const CanvasNode = memo(({ data, selected }: NodeProps<ServiceNodeData>) => {
             {/* Header */}
             <div className="flex items-center gap-3 mb-3">
                 <div className="w-8 h-8 bg-blue-500/20 rounded flex items-center justify-center text-lg shrink-0">
-                    {data.icon || '📦'}
+                    <IconDisplay name={data.label} size={20} className="text-blue-400" />
                 </div>
                 <h3 className="font-semibold text-white text-sm truncate">{data.label}</h3>
             </div>
@@ -57,7 +57,7 @@ const CanvasNode = memo(({ data, selected }: NodeProps<ServiceNodeData>) => {
                     {data.subBlocks?.map((block) => (
                         <div key={block.id} className="bg-white/5 rounded p-2 flex flex-col items-center gap-1 hover:bg-white/10 transition-colors cursor-pointer group">
                             <div className="text-xl group-hover:scale-110 transition-transform">
-                                {block.icon || '🔹'}
+                                <IconDisplay name={block.label} size={24} className="text-white/90" />
                             </div>
                             <span className="text-[10px] text-white/70 text-center truncate w-full">
                                 {block.label}

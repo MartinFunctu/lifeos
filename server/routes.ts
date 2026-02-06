@@ -7,6 +7,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Public routes
     app.get("/api/health", handlers.getHealth);
     app.post("/api/login", handlers.login);
+    app.post("/api/register", handlers.register);
 
     // Protected Canvas API routes
     app.get("/api/canvas/nodes", authMiddleware, handlers.getCanvasNodes);

@@ -16,11 +16,17 @@ import {
     ReactFlowProvider,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import BlockSettingsModal from '@/components/canvas/BlockSettingsModal';
+
+// ... (existing imports)
+
 import CanvasNode, { type ServiceNodeData } from '@/components/canvas/CanvasNode';
 import CanvasControls from '@/components/canvas/CanvasControls';
 import CanvasContextMenu from '@/components/canvas/CanvasContextMenu';
 import ChatbotAgent from '@/components/canvas/ChatbotAgent';
 import { Breadcrumbs, type BreadcrumbItem } from '@/components/Breadcrumbs';
+
+
 
 const nodeTypes = {
     service: CanvasNode,
@@ -183,20 +189,30 @@ function AdminDashboardContent() {
         setMenu(prev => ({ ...prev, visible: false }));
     }, [menu, screenToFlowPosition, setNodes, currentViewId]);
 
+    // Modal state
+    const [selectedBlock, setSelectedBlock] = useState<ServiceNode | null>(null);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+    // ... (existing code)
+
     const closeMenu = useCallback(() => {
         setMenu(prev => ({ ...prev, visible: false }));
     }, []);
 
-    // Navigation Handlers
-    const handleNodeDoubleClick = useCallback((event: React.MouseEvent, node: Node) => {
-        // If the node has children or specific navigation intention
-        // For now, we assume if it has subBlocks in data, it's navigable.
-        // Or we can just allow drilling into any node to create sub-canvases.
+    // Navigation/Interaction Handlers
+    const handleNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
         const serviceNode = node as ServiceNode;
+
+        // INTERACTION 1: Submap Block -> Navigate (Single Click)
         if (serviceNode.data.subBlocks && serviceNode.data.subBlocks.length > 0) {
             setViewPath(prev => [...prev, { id: node.id, label: serviceNode.data.label }]);
-            setTimeout(() => fitView({ duration: 500 }), 50); // Small delay to allow render
+            setTimeout(() => fitView({ duration: 500 }), 50);
+            return;
         }
+
+        // INTERACTION 2: Terminal Block -> Open Settings Modal (Single Click)
+        setSelectedBlock(serviceNode);
+        setIsSettingsOpen(true);
     }, [fitView]);
 
     const handleNavigate = useCallback((id: string, index: number) => {
@@ -233,7 +249,7 @@ function AdminDashboardContent() {
                     onEdgesChange={onEdgesChange}
                     onNodeDragStop={onNodeDragStop}
                     onPaneContextMenu={onPaneContextMenu}
-                    onNodeDoubleClick={handleNodeDoubleClick}
+                    onNodeClick={handleNodeClick}
                     onPaneClick={closeMenu}
                     nodeTypes={nodeTypes}
                     fitView
@@ -256,8 +272,16 @@ function AdminDashboardContent() {
                         onCreateNode={handleCreateNode}
                     />
                 </ReactFlow>
+
+
             </div>
-        </div>
+
+            <BlockSettingsModal
+                node={selectedBlock}
+                open={isSettingsOpen}
+                onOpenChange={setIsSettingsOpen}
+            />
+        </div >
     );
 }
 

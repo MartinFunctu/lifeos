@@ -1,6 +1,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+interface ModalConfig {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
 interface persistStore {
   cookiesAccepted: boolean
   setCookiesAccepted: (cookiesAccepted: boolean) => void
@@ -14,6 +21,8 @@ interface persistStore {
   setTimerSeconds: (timerSeconds: number) => void
   lastEmailUsed?: string
   setLastEmailUsed: (lastEmailUsed: string) => void
+  modalConfig?: ModalConfig
+  setModalConfig: (config: ModalConfig) => void
 }
 
 export const persistStore = create<persistStore>()(
@@ -34,6 +43,8 @@ export const persistStore = create<persistStore>()(
       setTimerSeconds: (timerSeconds: number) => set({ timerSeconds }),
       lastEmailUsed: undefined,
       setLastEmailUsed: (lastEmailUsed: string) => set({ lastEmailUsed }),
+      modalConfig: undefined,
+      setModalConfig: (config: ModalConfig) => set({ modalConfig: config }),
     }),
     {
       name: 'persist-storage-3'

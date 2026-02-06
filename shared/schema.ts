@@ -18,7 +18,13 @@ export const loginSchema = z.object({
     password: z.string(),
 });
 
+export const registerSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(6),
+});
+
 export type LoginRequest = z.infer<typeof loginSchema>;
+export type RegisterRequest = z.infer<typeof registerSchema>;
 
 // Canvas nodes table - stores nodes with positions relative to pivot (0,0)
 export const canvasNodes = pgTable("canvas_nodes", {
